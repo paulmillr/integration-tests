@@ -12,19 +12,19 @@ const REPO_MAP = {
   curves: { url: 'https://github.com/paulmillr/noble-curves', package: '@noble-curves' },
   hashes: { url: 'https://github.com/paulmillr/noble-hashes', package: '@noble/hashes' },
   ciphers: { url: 'https://github.com/paulmillr/noble-ciphers', package: '@noble/ciphers' },
-  // pqc: { url: 'https://github.com/paulmillr/noble-post-quantum', package: '@noble/post-quantum' },
+  pqc: { url: 'https://github.com/paulmillr/noble-post-quantum', package: '@noble/post-quantum' },
   starknet: { url: 'https://github.com/paulmillr/scure-starknet', package: '@scure/starknet' },
-  // btc: { url: 'https://github.com/paulmillr/scure-btc-signer', package: '@scure/btc-signer' },
-  // bip39: { url: 'https://github.com/paulmillr/scure-bip39', package: '@scure/bip39' },
-  // bip32: { url: 'https://github.com/paulmillr/scure-bip32', package: '@scure/bip32' },
-  // base: { url: 'https://github.com/paulmillr/scure-base', package: '@scure/base' },
-  // ordinals: { url: 'https://github.com/paulmillr/micro-ordinals', package: 'micro-ordinals' },
-  // sol: { url: 'https://github.com/paulmillr/micro-sol-signer', package: 'micro-sol-signer' },
-  // eth: { url: 'https://github.com/paulmillr/micro-eth-signer', package: 'micro-eth-signer' },
-  // rsa: { url: 'https://github.com/paulmillr/micro-rsa-dsa-dh', package: 'micro-rsa-dsa-dh' },
+  btc: { url: 'https://github.com/paulmillr/scure-btc-signer', package: '@scure/btc-signer' },
+  bip39: { url: 'https://github.com/paulmillr/scure-bip39', package: '@scure/bip39' },
+  bip32: { url: 'https://github.com/paulmillr/scure-bip32', package: '@scure/bip32' },
+  base: { url: 'https://github.com/paulmillr/scure-base', package: '@scure/base' },
+  ordinals: { url: 'https://github.com/paulmillr/micro-ordinals', package: 'micro-ordinals' },
+  sol: { url: 'https://github.com/paulmillr/micro-sol-signer', package: 'micro-sol-signer' },
+  eth: { url: 'https://github.com/paulmillr/micro-eth-signer', package: 'micro-eth-signer' },
+  rsa: { url: 'https://github.com/paulmillr/micro-rsa-dsa-dh', package: 'micro-rsa-dsa-dh' },
   keygen: { url: 'https://github.com/paulmillr/micro-key-producer', package: 'micro-key-producer' },
-  // qr: { url: 'https://github.com/paulmillr/qr', package: '@paulmillr/qr' },
-  // packed: { url: 'https://github.com/paulmillr/micro-packed', package: 'micro-packed' },
+  qr: { url: 'https://github.com/paulmillr/qr', package: '@paulmillr/qr' },
+  packed: { url: 'https://github.com/paulmillr/micro-packed', package: 'micro-packed' },
   // No build step
   // should: { url: 'https://github.com/paulmillr/micro-should', package: 'micro-should' },
   // bmark: { url: 'https://github.com/paulmillr/micro-bmark', package: 'micro-bmark' },
@@ -79,7 +79,7 @@ function chdir(newer) {
 }
 
 // Actions
-async function exec(repoName, cmd) {
+async function exec(repoName, cmd, title = "") {
   // if (repoName) chdir(repoName);
   if (repoName) console.log(`# in ${repoName}`);
   termLog(`${c.cyan}${cmd}${c.reset}`);
@@ -88,7 +88,7 @@ async function exec(repoName, cmd) {
     cwd: repoName ? path.join(process.cwd(), repoName) : undefined,
     env: { ...process.env, MSHOULD_QUIET: 1, MSHOULD_FAST: 1 },
   });
-  writeLog(repoName, stdout, stderr);
+  writeLog(title ? `${repoName}-${title}` : repoName, stdout, stderr);
   // if (repoName) chdir("..");
 }
 
@@ -108,7 +108,8 @@ async function gitClone(repoName, repoUrl, branch) {
     undefined,
     `git clone ${
       branch ? `-b ${branch}` : ""
-    } --recursive --depth 2 "${repoUrl}" "${repoName}"`
+    } --recursive --depth 2 "${repoUrl}" "${repoName}"`,
+    `${repoName}-clone`
   );
   return;
 }
@@ -116,14 +117,22 @@ async function gitClone(repoName, repoUrl, branch) {
 function replaceDeps(dir, deps) {
   chdir(dir);
   const cwd = dir;
-  console.log(`# replaceDeps "${cwd}/package.json": ${JSON.stringify(deps)}`);
   const data = JSON.parse(read("package.json"));
   // deps is like {dep: dir}, for each dir we do getWorkPath(dir), and then replace with file:...
+  let replaced = [];
   for (const [dep, depDir] of Object.entries(deps)) {
     depPath = `file:../${depDir}`;
-    if (data.dependencies?.[dep]) data.dependencies[dep] = depPath;
-    if (data.devDependencies?.[dep]) data.devDependencies[dep] = depPath;
+    if (data.dependencies?.[dep]) {
+      data.dependencies[dep] = depPath;
+      replaced.push({ [dep]: depPath });
+    }
+    if (data.devDependencies?.[dep]) {
+      data.devDependencies[dep] = depPath;
+      replaced.push({ [dep]: depPath });
+    }
   }
+  if (replaced.length)
+    console.log(`# replaceDeps package.json ${JSON.stringify(replaced)}`);
   write("package.json", JSON.stringify(data, null, 2));
   chdir("..");
 }
@@ -136,12 +145,14 @@ const REPLACE_DEPS_ALL = Object.fromEntries(
 
 const getWorkflows = () => [
   ...REPOS.map((i) => () => gitClone(i, REPO_MAP[i].url, undefined)),
-  ...REPOS.map((i) => () => exec(i, "npm install && npm run build")),
-  ...REPOS.map((i) => () => exec(i, `npm pack && mv *.tgz ../${i}.tgz`)),
+  ...REPOS.map((i) => () => exec(i, "npm install && npm run build", "build")),
+  ...REPOS.map(
+    (i) => () => exec(i, `npm pack && mv *.tgz ../${i}.tgz`, "pack")
+  ),
   ...REPOS.map((i) => () => replaceDeps(i, REPLACE_DEPS_ALL)),
   ...REPOS.map((i) => () => rm(`${i}/node_modules`)),
   ...REPOS.map(
-    (i) => () => exec(i, "npm install && npm run build && npm run test")
+    (i) => () => exec(i, "npm install && npm run build && npm run test", "test")
   ),
 ];
 
