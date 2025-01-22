@@ -30,9 +30,9 @@ const REPO_MAP = {
   ordinals: { url: 'https://github.com/paulmillr/micro-ordinals', package: 'micro-ordinals' },
   sol: { url: 'https://github.com/paulmillr/micro-sol-signer', package: 'micro-sol-signer' },
   eth: { url: 'https://github.com/paulmillr/micro-eth-signer', package: 'micro-eth-signer' },
-  rsa: { url: 'https://github.com/paulmillr/micro-rsa-dsa-dh', package: 'micro-rsa-dsa-dh' },
+  // rsa: { url: 'https://github.com/paulmillr/micro-rsa-dsa-dh', package: 'micro-rsa-dsa-dh' },
   keygen: { url: 'https://github.com/paulmillr/micro-key-producer', package: 'micro-key-producer' },
-  qr: { url: 'https://github.com/paulmillr/qr', package: '@paulmillr/qr' },
+  // qr: { url: 'https://github.com/paulmillr/qr', package: '@paulmillr/qr' },
   packed: { url: 'https://github.com/paulmillr/micro-packed', package: 'micro-packed' },
   // No build step
   // should: { url: 'https://github.com/paulmillr/micro-should', package: 'micro-should' },
