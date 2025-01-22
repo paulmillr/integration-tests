@@ -18,11 +18,7 @@ const REPO_MAP = {
   hashes: { url: 'https://github.com/paulmillr/noble-hashes', package: '@noble/hashes' },
   ciphers: { url: 'https://github.com/paulmillr/noble-ciphers', package: '@noble/ciphers' },
   pqc: { url: 'https://github.com/paulmillr/noble-post-quantum', package: '@noble/post-quantum' },
-  // Broken tests:
-  // import { default as issue2 } from './fixtures/issue2.json' assert { type: 'json' };
-  //                                                           ^^^^^^
-  // SyntaxError: Unexpected identifier 'assert'
-  // starknet: { url: 'https://github.com/paulmillr/scure-starknet', package: '@scure/starknet' },
+  starknet: { url: 'https://github.com/paulmillr/scure-starknet', package: '@scure/starknet' },
   btc: { url: 'https://github.com/paulmillr/scure-btc-signer', package: '@scure/btc-signer' },
   bip39: { url: 'https://github.com/paulmillr/scure-bip39', package: '@scure/bip39' },
   bip32: { url: 'https://github.com/paulmillr/scure-bip32', package: '@scure/bip32' },
