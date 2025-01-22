@@ -22,6 +22,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: integration-logs
-          path: logs/logs.tar.bz2
-          compression-level: 0
+          path: work/logs/integrations/logs
           overwrite: true
+          # compression-level: 9

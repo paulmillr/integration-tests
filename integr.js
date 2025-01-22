@@ -189,11 +189,7 @@ const envFlag = wrapAction(function env(ctx, key, value) {
 const executeWorkflow = async (name, workflow) => {
   const ts = Date.now();
   const context = { name, workDir: WORK_DIR, date: formatDate(ts) };
-  context.runDir = path.join(
-    LOGS_DIR,
-    // context.date,
-    sanitizeName(context.name)
-  );
+  context.runDir = path.join(LOGS_DIR, sanitizeName(context.name));
   context.logDir = path.join(context.runDir, "logs");
   const statusPath = path.join(context.runDir, "status.json");
   const status = {
