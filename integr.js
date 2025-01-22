@@ -228,9 +228,7 @@ const executeWorkflow = async (name, workflow) => {
       const dur = Date.now() - curStep.ts;
       curStep.duration = formatDuration(dur);
       if (dur > 15000)
-        console.log(
-          `# done in ${colors.green}${curStep.duration}${colors.reset}`
-        );
+        console.log(`# done in ${c.green}${curStep.duration}${c.reset}`);
       updateStatus();
       i++;
     }
