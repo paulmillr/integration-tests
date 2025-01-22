@@ -50,6 +50,7 @@ const getWorkPath = (dir) =>
   path.isAbsolute(dir) ? dir : path.resolve(path.join(WORK_DIR, dir));
 const read = (filePath) => fs.readFileSync(filePath, "utf8");
 const write = (filePath, content = "") => {
+  console.log("writing", filePath, content.length);
   const tmpPath = `${filePath}.tmp`;
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(tmpPath, content);
