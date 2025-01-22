@@ -199,7 +199,7 @@ const executeWorkflow = async (name, workflow) => {
   const status = {
     date: formatDate(Date.now()),
     steps: [],
-    status: "STARTED",
+    status: "started",
     context,
   };
   const updateStatus = () => {
@@ -213,7 +213,7 @@ const executeWorkflow = async (name, workflow) => {
     ensureDir(context.logDir)(context);
     let i = 0;
     for (const step of workflow) {
-      curStep = { i, ts: Date.now(), name: step.fullName, status: "STARTED" };
+      curStep = { i, ts: Date.now(), name: step.fullName, status: "started" };
       status.steps.push(curStep);
       curStep.duration = formatDuration(Date.now() - curStep.ts);
       curStep.logPath = path.join(
@@ -227,7 +227,7 @@ const executeWorkflow = async (name, workflow) => {
       context.output = "";
       const dur = Date.now() - curStep.ts;
       curStep.duration = formatDuration(dur);
-      if (dur > 15000 || step.fullName.includes("exec"))
+      if (dur > 15000 || step.fullName.includes("npm run test"))
         console.log(`# done in ${c.green}${curStep.duration}${c.reset}`);
       updateStatus();
       i++;
@@ -245,6 +245,7 @@ const executeWorkflow = async (name, workflow) => {
   }
   updateStatus();
   // Don't override last output command
+  console.log(context.runDir, context.logDir);
   const saveLogCtx = { ...context };
   try {
     exec(
@@ -252,7 +253,7 @@ const executeWorkflow = async (name, workflow) => {
       "tar -cjf logs.tar.bz2 --exclude=logs.tar.bz2 logs/"
     )(saveLogCtx);
   } catch (e) {
-    console.error("SAVE LOGS ERROR", e, saveLogCtx);
+    console.error("log save error", e, saveLogCtx);
   }
 };
 
@@ -295,7 +296,7 @@ const main = async () => {
     try {
       await executeWorkflow(workflowName, workflow);
     } catch (e) {
-      console.log(`Failed: ${workflowName}`, e);
+      console.error(`Failed: ${workflowName}`, e);
       process.exit(1);
     }
   }
