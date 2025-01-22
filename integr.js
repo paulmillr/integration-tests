@@ -39,6 +39,15 @@ const REPO_MAP = {
   // bmark: { url: 'https://github.com/paulmillr/micro-bmark', package: 'micro-bmark' },
 };
 
+// String formatting utils
+const _c = String.fromCharCode(27); // x1b, control code for terminal colors
+const c = {
+  // colors
+  red: _c + "[31m",
+  green: _c + "[32m",
+  reset: _c + "[0m",
+};
+
 // Utils
 const sanitizeName = (name) => name.toLowerCase().replace(/\s+/g, "_");
 const getWorkPath = (dir) =>
@@ -215,7 +224,7 @@ const executeWorkflow = async (name, workflow) => {
         context.logDir,
         `${i}-${sanitizeName(curStep.name).split("(")[0]}.log`
       );
-      console.log(`- Step: ${curStep.name}`);
+      console.log(curStep.name);
       step(context);
       write(curStep.logPath, context.output);
       curStep.status = "DONE";
@@ -236,7 +245,6 @@ const executeWorkflow = async (name, workflow) => {
     if (curStep.name) write(curStep.logPath, context.output);
   }
   updateStatus();
-  const attachments = [path.join(context.runDir, "logs.tar.bz2")];
   // Don't override last output command
   {
     const saveLogCtx = { ...context };
@@ -246,7 +254,7 @@ const executeWorkflow = async (name, workflow) => {
         "tar -cjf logs.tar.bz2 --exclude=logs.tar.bz2 logs/"
       )(saveLogCtx);
     } catch (e) {
-      console.log("SAVE LOGS ERROR", e, saveLogCtx);
+      console.error("SAVE LOGS ERROR", e, saveLogCtx);
     }
   }
   // Send email
@@ -310,6 +318,8 @@ const main = async () => {
       process.exit(1);
     }
   }
-  console.log(`!!! Total time: ${formatDuration(Date.now() - ts)}`);
+  console.log(
+    `${c.green}Total time: ${formatDuration(Date.now() - ts)}${c.reset}`
+  );
 };
 if (require.main === module) main();

@@ -17,3 +17,7 @@ jobs:
           cache: npm
           node-version: 22
       - run: node integr.js
+      - uses: actions/upload-artifact@v4
+        with:
+          path: logs.tar.bz2
+          compression-level: 0
