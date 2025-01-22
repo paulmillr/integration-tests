@@ -223,22 +223,22 @@ const executeWorkflow = async (name, workflow) => {
       console.log(curStep.name);
       step(context);
       write(curStep.logPath, context.output);
-      curStep.status = "DONE";
+      curStep.status = "done";
       context.output = "";
       const dur = Date.now() - curStep.ts;
       curStep.duration = formatDuration(dur);
-      if (dur > 15000)
+      if (dur > 15000 || step.fullName.includes("exec"))
         console.log(`# done in ${c.green}${curStep.duration}${c.reset}`);
       updateStatus();
       i++;
     }
-    status.status = "DONE";
+    status.status = "done";
     curStep = {}; // success, lets clean
   } catch (e) {
     curStep.duration = formatDuration(Date.now() - curStep.ts);
-    curStep.status = "FAILED";
-    status.status = "FAILED";
-    console.log("STEP FAILED");
+    curStep.status = "failed";
+    status.status = "failed";
+    console.log(`${c.red}step failed${c.reset}`);
     if (!context.output) context.output = "";
     context.output += `# Error: ${e.message}\n${e.stack}\n`;
     if (curStep.name) write(curStep.logPath, context.output);
@@ -254,24 +254,6 @@ const executeWorkflow = async (name, workflow) => {
   } catch (e) {
     console.error("SAVE LOGS ERROR", e, saveLogCtx);
   }
-  // Send email
-  const subject = `[${status.status}] ${context.name}: ${context.date}`;
-  let body = `Status: ${status.status}\n`;
-  body += `Duration: ${status.duration}\n`;
-  const info = formatInfo(context);
-  body += info;
-  body += `Hash: ${sha256(info)}\n`;
-  body += `Steps:\n`;
-  for (const s of status.steps) {
-    body += `- ${s.name} (${s.duration}): ${s.status}\n`;
-  }
-  if (context.output)
-    body += `\nLogs:\n${context.output
-      .split("\n")
-      .map((i) => `> ${i}`)
-      .join("\n")}`;
-  console.log("MAIL", subject);
-  console.log("RES", body);
 };
 
 const REPOS = Object.keys(REPO_MAP);
