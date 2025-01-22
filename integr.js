@@ -247,7 +247,7 @@ const executeWorkflow = async (name, workflow) => {
       context.runDir,
       "tar -cjf logs.tar.bz2 --exclude=logs.tar.bz2 logs/"
     )(saveLogCtx);
-    console.log(fs.readdirSync(context.runDir));
+    console.log(fs.readdirSync(context, context.runDir));
     console.log(fs.readdirSync(context.logDir));
   } catch (e) {
     console.error("log save error", e, saveLogCtx);
