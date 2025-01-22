@@ -14,22 +14,22 @@ const SHELL = "/bin/bash";
 // Workflow definitions
 // prettier-ignore
 const REPO_MAP = {
-  curves: { url: 'https://github.com/paulmillr/noble-curves', package: '@noble-curves' },
+  // curves: { url: 'https://github.com/paulmillr/noble-curves', package: '@noble-curves' },
   hashes: { url: 'https://github.com/paulmillr/noble-hashes', package: '@noble/hashes' },
-  ciphers: { url: 'https://github.com/paulmillr/noble-ciphers', package: '@noble/ciphers' },
-  pqc: { url: 'https://github.com/paulmillr/noble-post-quantum', package: '@noble/post-quantum' },
-  starknet: { url: 'https://github.com/paulmillr/scure-starknet', package: '@scure/starknet' },
-  btc: { url: 'https://github.com/paulmillr/scure-btc-signer', package: '@scure/btc-signer' },
-  bip39: { url: 'https://github.com/paulmillr/scure-bip39', package: '@scure/bip39' },
-  bip32: { url: 'https://github.com/paulmillr/scure-bip32', package: '@scure/bip32' },
-  base: { url: 'https://github.com/paulmillr/scure-base', package: '@scure/base' },
-  ordinals: { url: 'https://github.com/paulmillr/micro-ordinals', package: 'micro-ordinals' },
-  sol: { url: 'https://github.com/paulmillr/micro-sol-signer', package: 'micro-sol-signer' },
-  eth: { url: 'https://github.com/paulmillr/micro-eth-signer', package: 'micro-eth-signer' },
+  // ciphers: { url: 'https://github.com/paulmillr/noble-ciphers', package: '@noble/ciphers' },
+  // pqc: { url: 'https://github.com/paulmillr/noble-post-quantum', package: '@noble/post-quantum' },
+  // starknet: { url: 'https://github.com/paulmillr/scure-starknet', package: '@scure/starknet' },
+  // btc: { url: 'https://github.com/paulmillr/scure-btc-signer', package: '@scure/btc-signer' },
+  // bip39: { url: 'https://github.com/paulmillr/scure-bip39', package: '@scure/bip39' },
+  // bip32: { url: 'https://github.com/paulmillr/scure-bip32', package: '@scure/bip32' },
+  // base: { url: 'https://github.com/paulmillr/scure-base', package: '@scure/base' },
+  // ordinals: { url: 'https://github.com/paulmillr/micro-ordinals', package: 'micro-ordinals' },
+  // sol: { url: 'https://github.com/paulmillr/micro-sol-signer', package: 'micro-sol-signer' },
+  // eth: { url: 'https://github.com/paulmillr/micro-eth-signer', package: 'micro-eth-signer' },
   // rsa: { url: 'https://github.com/paulmillr/micro-rsa-dsa-dh', package: 'micro-rsa-dsa-dh' },
   keygen: { url: 'https://github.com/paulmillr/micro-key-producer', package: 'micro-key-producer' },
   // qr: { url: 'https://github.com/paulmillr/qr', package: '@paulmillr/qr' },
-  packed: { url: 'https://github.com/paulmillr/micro-packed', package: 'micro-packed' },
+  // packed: { url: 'https://github.com/paulmillr/micro-packed', package: 'micro-packed' },
   // No build step
   // should: { url: 'https://github.com/paulmillr/micro-should', package: 'micro-should' },
   // bmark: { url: 'https://github.com/paulmillr/micro-bmark', package: 'micro-bmark' },
@@ -245,16 +245,14 @@ const executeWorkflow = async (name, workflow) => {
   }
   updateStatus();
   // Don't override last output command
-  {
-    const saveLogCtx = { ...context };
-    try {
-      exec(
-        context.runDir,
-        "tar -cjf logs.tar.bz2 --exclude=logs.tar.bz2 logs/"
-      )(saveLogCtx);
-    } catch (e) {
-      console.error("SAVE LOGS ERROR", e, saveLogCtx);
-    }
+  const saveLogCtx = { ...context };
+  try {
+    exec(
+      context.runDir,
+      "tar -cjf logs.tar.bz2 --exclude=logs.tar.bz2 logs/"
+    )(saveLogCtx);
+  } catch (e) {
+    console.error("SAVE LOGS ERROR", e, saveLogCtx);
   }
   // Send email
   const subject = `[${status.status}] ${context.name}: ${context.date}`;
