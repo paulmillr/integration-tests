@@ -19,5 +19,7 @@ jobs:
       - run: node integr.js
       - uses: actions/upload-artifact@v4
         with:
+          name: integration-logs
           path: logs.tar.bz2
           compression-level: 0
+          overwrite: true
