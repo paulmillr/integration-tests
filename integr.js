@@ -191,7 +191,7 @@ const executeWorkflow = async (name, workflow) => {
   const context = { name, workDir: WORK_DIR, date: formatDate(ts) };
   context.runDir = path.join(
     LOGS_DIR,
-    context.date,
+    // context.date,
     sanitizeName(context.name)
   );
   context.logDir = path.join(context.runDir, "logs");
@@ -245,14 +245,14 @@ const executeWorkflow = async (name, workflow) => {
   }
   updateStatus();
   // Don't override last output command
-  console.log(context.runDir, context.logDir);
   const saveLogCtx = { ...context };
   try {
     exec(
       context.runDir,
       "tar -cjf logs.tar.bz2 --exclude=logs.tar.bz2 logs/"
     )(saveLogCtx);
-    execSync(`mv logs.tar.bz2 ${LOGS_DIR}`);
+    console.log(fs.readdirSync(context.runDir));
+    console.log(fs.readdirSync(context.logDir));
   } catch (e) {
     console.error("log save error", e, saveLogCtx);
   }
