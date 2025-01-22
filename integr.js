@@ -225,8 +225,9 @@ const executeWorkflow = async (name, workflow) => {
       write(curStep.logPath, context.output);
       curStep.status = "DONE";
       context.output = "";
-      curStep.duration = formatDuration(Date.now() - curStep.ts);
-      console.log("# done in " + curStep.duration);
+      const dur = Date.now() - curStep.ts;
+      curStep.duration = formatDuration(dur);
+      if (dur > 15000) console.log("# done in " + curStep.duration);
       updateStatus();
       i++;
     }
