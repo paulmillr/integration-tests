@@ -21,6 +21,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: integration-logs
-          path: logs/integrations/logs
+          path: work/logs
           overwrite: true
           # compression-level: 9
