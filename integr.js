@@ -12,7 +12,7 @@ const REPO_MAP = {
   curves: { url: 'https://github.com/paulmillr/noble-curves', package: '@noble-curves' },
   hashes: { url: 'https://github.com/paulmillr/noble-hashes', package: '@noble/hashes' },
   ciphers: { url: 'https://github.com/paulmillr/noble-ciphers', package: '@noble/ciphers' },
-  pqc: { url: 'https://github.com/paulmillr/noble-post-quantum', package: '@noble/post-quantum' },
+  // pqc: { url: 'https://github.com/paulmillr/noble-post-quantum', package: '@noble/post-quantum' },
   starknet: { url: 'https://github.com/paulmillr/scure-starknet', package: '@scure/starknet' },
   // btc: { url: 'https://github.com/paulmillr/scure-btc-signer', package: '@scure/btc-signer' },
   // bip39: { url: 'https://github.com/paulmillr/scure-bip39', package: '@scure/bip39' },
@@ -80,14 +80,16 @@ function chdir(newer) {
 
 // Actions
 async function exec(repoName, cmd) {
+  // if (repoName) chdir(repoName);
+  if (repoName) console.log(`# in ${repoName}`);
   termLog(`${c.cyan}${cmd}${c.reset}`);
-  if (repoName) chdir(repoName);
   const { stdout, stderr } = await pexec(cmd, {
     encoding: "utf8",
+    cwd: repoName ? path.join(process.cwd(), repoName) : undefined,
     env: { ...process.env, MSHOULD_QUIET: 1, MSHOULD_FAST: 1 },
   });
   writeLog(repoName, stdout, stderr);
-  if (repoName) chdir("..");
+  // if (repoName) chdir("..");
 }
 
 function rm(dir) {
@@ -101,7 +103,6 @@ function mkdirp(dir) {
 }
 
 async function gitClone(repoName, repoUrl, branch) {
-  console.log(`# gitClone ${repoName} ${repoUrl}`);
   // rm(repoName);
   await exec(
     undefined,
