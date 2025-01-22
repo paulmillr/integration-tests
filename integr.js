@@ -241,17 +241,17 @@ const executeWorkflow = async (name, workflow) => {
   }
   updateStatus();
   // Don't override last output command
-  const saveLogCtx = { ...context };
-  try {
-    exec(
-      context.runDir,
-      "tar -cjf logs.tar.bz2 --exclude=logs.tar.bz2 logs/"
-    )(saveLogCtx);
-    console.log(fs.readdirSync(context, context.runDir));
-    console.log(fs.readdirSync(context.logDir));
-  } catch (e) {
-    console.error("log save error", e, saveLogCtx);
-  }
+  // const saveLogCtx = { ...context };
+  // try {
+  //   exec(
+  //     context.runDir,
+  //     "tar -cjf logs.tar.bz2 --exclude=logs.tar.bz2 logs/"
+  //   )(saveLogCtx);
+  //   console.log(fs.readdirSync(context, context.runDir));
+  //   console.log(fs.readdirSync(context.logDir));
+  // } catch (e) {
+  //   console.error("log save error", e, saveLogCtx);
+  // }
 };
 
 const REPOS = Object.keys(REPO_MAP);
