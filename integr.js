@@ -226,6 +226,7 @@ const executeWorkflow = async (name, workflow) => {
       curStep.status = "DONE";
       context.output = "";
       curStep.duration = formatDuration(Date.now() - curStep.ts);
+      console.log("# done in " + curStep.duration);
       updateStatus();
       i++;
     }
@@ -286,11 +287,13 @@ const WORKFLOWS = {
     //nvmUse('--lts'),
     envFlag("MSHOULD_FAST", "1"),
     ...REPOS.map((i) => gitClone(i, REPO_MAP[i].url, undefined)),
-    ...REPOS.map((i) => exec(i, "npm i && npm run build")),
+    ...REPOS.map((i) => exec(i, "npm install && npm run build")),
     ...REPOS.map((i) => exec(i, `npm pack && mv *.tgz ../${i}.tgz`)),
     ...REPOS.map((i) => replaceDeps(i, REPLACE_DEPS_ALL)),
     ...REPOS.map((i) => cleanDir(`${i}/node_modules`)),
-    ...REPOS.map((i) => exec(i, "npm i && npm run build && npm run test")),
+    ...REPOS.map((i) =>
+      exec(i, "npm install && npm run build && npm run test")
+    ),
   ],
 };
 
