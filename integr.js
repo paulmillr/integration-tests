@@ -80,7 +80,6 @@ function chdir(newer) {
 
 // Actions
 async function exec(repoName, cmd, title = "") {
-  // if (repoName) chdir(repoName);
   if (repoName) console.log(`# in ${repoName}`);
   termLog(`${c.cyan}${cmd}${c.reset}`);
   const { stdout, stderr } = await pexec(cmd, {
@@ -89,7 +88,6 @@ async function exec(repoName, cmd, title = "") {
     env: { ...process.env, MSHOULD_QUIET: 1, MSHOULD_FAST: 1 },
   });
   writeLog(title ? `${repoName}-${title}` : repoName, stdout, stderr);
-  // if (repoName) chdir("..");
 }
 
 function rm(dir) {
@@ -173,8 +171,10 @@ const main = async () => {
     } catch (error) {
       throw error;
     }
-    const diff = Date.now() - start;
-    console.log();
+    if (diff > 20000)
+      console.log(
+        `${c.yellow}# ${i} done in ${formatDuration(Date.now() - start)}`
+      );
     console.log();
   }
   try {
