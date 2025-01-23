@@ -5,7 +5,7 @@ on:
     - cron: "0 10 * * *"
   workflow_dispatch:
 jobs:
-  node:
+  integration:
     name: Integration tests
     runs-on: ubuntu-24.04-arm
     env:
@@ -17,10 +17,28 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           cache: npm
           node-version: 22
-      - run: node integr.js
+      - run: node integration.js
       - uses: actions/upload-artifact@v4
         with:
           name: integration-logs
           path: work/logs
           overwrite: true
           # compression-level: 9
+  fuzz:
+    name: Fuzzing
+    runs-on: ubuntu-24.04-arm
+    env:
+      MSHOULD_FAST: 1
+    steps:
+      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4
+      - uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65 # v4
+        with:
+          registry-url: "https://registry.npmjs.org"
+          cache: npm
+          node-version: 22
+      - run: git clone https://github.com/paulmillr/noble-curves curves
+      - run: cd curves; npm install; npm run build
+      - run: cd curves; npm install; npm run test
+      - run: cd cryptofuzz/modules/noble-curves; make clean
+      - run: cd cryptofuzz; bash ./build.sh fast
+      - run: cd cryptofuzz; ./cryptofuzz -verbosity=1 -create_missing_dirs=1 -runs=100000
