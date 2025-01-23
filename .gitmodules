@@ -1,0 +1,3 @@
+[submodule "cryptofuzz"]
+	path = cryptofuzz
+	url = https://github.com/paulmillr/cryptofuzz.git
