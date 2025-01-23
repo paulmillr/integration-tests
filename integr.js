@@ -171,7 +171,7 @@ const main = async () => {
     } catch (error) {
       throw error;
     }
-    if (diff > 20000)
+    if (Date.now() - start > 20000)
       console.log(
         `${c.yellow}# ${i} done in ${formatDuration(Date.now() - start)}`
       );
