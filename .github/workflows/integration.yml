@@ -43,5 +43,6 @@ jobs:
       - run: sudo bash ./fuzz-install.sh
       # - run: cd curves; npm install; npm run test
       - run: cd cryptofuzz/modules/noble-curves; make clean
+      - run: cd cryptofuzz; bash ./build.sh
       - run: cd cryptofuzz; bash ./build.sh fast
       - run: cd cryptofuzz; ./cryptofuzz -verbosity=1 -create_missing_dirs=1 -runs=100000
