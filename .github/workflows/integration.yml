@@ -7,7 +7,7 @@ on:
 jobs:
   integration:
     name: Integration tests
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
     env:
       MSHOULD_FAST: 1
     steps:
@@ -26,7 +26,7 @@ jobs:
           # compression-level: 9
   fuzz:
     name: Fuzzing
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
     env:
       MSHOULD_FAST: 1
     steps:
