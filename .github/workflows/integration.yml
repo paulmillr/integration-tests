@@ -40,6 +40,7 @@ jobs:
           node-version: 22
       - run: git clone https://github.com/paulmillr/noble-curves curves
       - run: cd curves; npm install; npm run build
+      - run: sudo apt install -y clang-15
       # - run: cd curves; npm install; npm run test
       - run: cd cryptofuzz/modules/noble-curves; make clean
       - run: cd cryptofuzz; bash ./build.sh fast
