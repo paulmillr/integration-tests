@@ -40,11 +40,12 @@ jobs:
           node-version: 22
       - run: git clone https://github.com/paulmillr/noble-curves curves
       - run: cd curves; npm install; npm run build
-      - run: sudo bash ./fuzz-install.sh
-      - run: ln -s /usr/lib/llvm-14/include/c++/v1 /usr/include/c++/v1
+      - run: sudo apt install -qy bzip2 build-essential libc++-dev libc++-abi-dev lsb-release software-properties-common gnupg libboost-all-dev xxd cmake git wget curl bc jq
+        name: Install apt dependencies
+      - run: wget https://apt.llvm.org/llvm.sh; chmod +x llvm.sh; sudo ./llvm.sh 15
+        name: Install LLVM 15
+      - run: sudo ln -s /usr/lib/llvm-14/include/c++/v1 /usr/include/c++/v1
       - run: ls -lah /usr/include/c++
-      # - run: ls -lah /usr/lib/; -ls -lah /usr/lib/llvm-15/include/c++/v1
-      # - run: exit 1
       - run: cd curves; npm install; npm run test
       - run: cd cryptofuzz/modules/noble-curves; make clean
       - run: cd cryptofuzz; bash ./build.sh
