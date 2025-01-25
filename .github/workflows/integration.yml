@@ -40,6 +40,7 @@ jobs:
           node-version: 22
       - run: git clone https://github.com/paulmillr/noble-curves curves
       - run: cd curves; npm install; npm run build
+      - run: sudo apt update -y
       - run: sudo apt install -qq -y bzip2 build-essential libc++-dev libc++abi-dev lsb-release software-properties-common gnupg libboost-all-dev xxd cmake git wget curl bc jq
         name: Install apt dependencies
       - run: wget https://apt.llvm.org/llvm.sh; chmod +x llvm.sh; sudo ./llvm.sh 15
