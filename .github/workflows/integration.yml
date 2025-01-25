@@ -2,7 +2,7 @@ name: Run integration tests
 on:
   push:
   schedule:
-    - cron: "0 10 * * *"
+    - cron: "0 8 * * *"
   workflow_dispatch:
 jobs:
   integration:
@@ -52,3 +52,4 @@ jobs:
       - run: cd cryptofuzz; bash ./build.sh
       - run: cd cryptofuzz; bash ./build.sh fast
       - run: cd cryptofuzz; ./cryptofuzz -verbosity=1 -create_missing_dirs=1 -runs=100000
+        name: Run cryptofuzz with 100K iterations
