@@ -42,6 +42,7 @@ jobs:
       - run: cd curves; npm install; npm run build
       - run: sudo bash ./fuzz-install.sh
       - run: ls -lah /usr/include/c++
+      - run: ls -lah /usr/lib/; -ls -lah /usr/lib/llvm-15/include/c++/v1
       - run: exit 1
       # - run: cd curves; npm install; npm run test
       - run: cd cryptofuzz/modules/noble-curves; make clean
