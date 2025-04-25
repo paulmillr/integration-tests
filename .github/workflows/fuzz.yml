@@ -1,0 +1,35 @@
+name: Fuzzing
+on:
+  push:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+jobs:
+  fuzz:
+    name: Fuzzing
+    runs-on: ubuntu-22.04
+    env:
+      MSHOULD_FAST: 1
+    steps:
+      - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4
+        with:
+          submodules: true
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4
+        with:
+          registry-url: "https://registry.npmjs.org"
+          node-version: 22
+      - run: git clone https://github.com/paulmillr/noble-curves curves
+      - run: cd curves; npm install; npm run build
+      - run: sudo apt update -y
+      - run: sudo apt install -qq -y bzip2 build-essential libc++-dev libc++abi-dev lsb-release software-properties-common gnupg libboost-all-dev xxd cmake git wget curl bc jq
+        name: Install apt dependencies
+      - run: wget https://apt.llvm.org/llvm.sh; chmod +x llvm.sh; sudo ./llvm.sh 15
+        name: Install LLVM 15
+      - run: sudo ln -s /usr/lib/llvm-14/include/c++/v1 /usr/include/c++/v1
+      - run: ls -lah /usr/include/c++
+      - run: cd curves; npm install; npm run test
+      - run: cd cryptofuzz/modules/noble-curves; make clean
+      - run: cd cryptofuzz; bash ./build.sh
+      - run: cd cryptofuzz; bash ./build.sh fast
+      - run: cd cryptofuzz; ./cryptofuzz -verbosity=1 -create_missing_dirs=1 -runs=100000
+        name: Run cryptofuzz with 100K iterations
