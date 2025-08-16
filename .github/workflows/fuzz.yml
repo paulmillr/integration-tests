@@ -14,11 +14,12 @@ jobs:
       - uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4
         with:
           submodules: true
+          persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4
         with:
           registry-url: "https://registry.npmjs.org"
           node-version: 22
-      - run: git clone https://github.com/paulmillr/noble-curves curves
+      - run: git clone --recurse-submodules https://github.com/paulmillr/noble-curves curves
       - run: cd curves; npm install; npm run build
       - run: sudo apt update -y
       - run: sudo apt install -qq -y bzip2 build-essential libc++-dev libc++abi-dev lsb-release software-properties-common gnupg libboost-all-dev xxd cmake git wget curl bc jq
